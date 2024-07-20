@@ -3,4 +3,41 @@ title: "Two Parameters"
 author: "Elaine Zhang"
 format: html
 ---
+we have data about people, their heights, and other covariates. We want to find the proportion of men with different heights. However, we can't assume validity since the measurements might have varied (like if they were wearing shoes or not).However, stability may not hold since an influx of immigrants may change the height average. 
+```{r}
+#| echo: FALSE
+#| message: FALSE
+
+library(tidyverse)
+library(primer.data)
+library(tidybayes)
+library(brms)
+```
+
+```{r}
+nhanes |>
+  filter(sex == "Male", age >= 18) |>
+  select(height) |>
+  drop_na() |>
+  ggplot(aes(x = height)) +
+    geom_histogram(bins = 50) +
+    labs(
+      title = "Male Adult Height in the US in 2010",
+      x = "Height (cm)",
+      y = "Count",
+      caption = "Source: National Health and Nutrition Examination Servey")
+```
+
+```{r}
+#| cache: TRUE
+#| echo: FALSE
+
+fit_male_height <- brm(
+  formula = height ~ 1,
+  data = nhanes,
+  family = gaussian,
+  silent = 2,
+  refresh = 0,
+  seed = 12)
+```
 
